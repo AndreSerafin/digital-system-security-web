@@ -1,8 +1,8 @@
 export interface SystemResponse {
   id: string
-  acronym: 'SYSTEST'
+  acronym: string
   description: string
-  attendance_email: string
+  attendance_email?: string
   url: string
   status: 'ACTIVE' | 'INACTIVE'
   created_at: string
@@ -14,8 +14,8 @@ export interface FetchSystemsResponse {
 }
 
 export interface SystemRequest {
+  acronym: string
   description: string
-  attendance_email: string
+  attendance_email?: string
   url: string
-  status: 'ACTIVE' | 'INACTIVE'
 }

@@ -41,7 +41,7 @@ export function SystemsTable() {
           <TableRow key={system.acronym + index}>
             <TableCell className="font-medium">{system.description}</TableCell>
             <TableCell>{system.acronym}</TableCell>
-            <TableCell>{system.attendance_email}</TableCell>
+            <TableCell>{system.attendance_email ?? '------'}</TableCell>
             <TableCell>{system.url}</TableCell>
             <TableCell>{system.status}</TableCell>
             <TableCell>
