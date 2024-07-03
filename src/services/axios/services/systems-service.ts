@@ -1,6 +1,6 @@
 import { HttpLink } from '@/@types/http-link'
 
-import { AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import {
   FetchSystemsResponse,
   SystemRequest,
@@ -15,8 +15,10 @@ export class SystemsService implements DefaultSystemService {
     private readonly httpService: HttpLink<AxiosResponse>,
   ) {}
 
-  async fetch(): Promise<AxiosResponse<FetchSystemsResponse>> {
-    const response = await this.httpService.get(this.endpoint)
+  async fetch(
+    params?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<FetchSystemsResponse>> {
+    const response = await this.httpService.get(this.endpoint, { ...params })
 
     return response
   }

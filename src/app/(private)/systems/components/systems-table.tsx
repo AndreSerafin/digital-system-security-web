@@ -13,17 +13,29 @@ import { useQuery } from '@tanstack/react-query'
 import { makeAxiosSystemsService } from '@/services/axios/factories/make-axios-systems-service'
 import { Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const systemsService = makeAxiosSystemsService()
 
 export function SystemsTable() {
+  const params = useSearchParams()
+  const attendanceEmail = params.get('attendanceEmail')
+  const description = params.get('description')
+  const acronym = params.get('acronym')
+
   const [editDialogIsOpen, setEditDialogIsOpen] = useState(false)
   const [selectedSystemId, setSelectedSystemId] = useState<string>('')
 
   const { data: systemsData } = useQuery({
-    queryKey: ['fetch-systems'],
+    queryKey: ['fetch-systems', attendanceEmail, description, acronym],
     queryFn: async () => {
-      const { data } = await systemsService.fetch()
+      const { data } = await systemsService.fetch({
+        params: {
+          acronym,
+          attendance_email: attendanceEmail,
+          description,
+        },
+      })
 
       return data
     },

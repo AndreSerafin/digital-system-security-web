@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import {
   FetchSystemsResponse,
   SystemRequest,
@@ -7,7 +7,9 @@ import {
 } from '../dto/system'
 
 export interface DefaultSystemService {
-  fetch(): Promise<AxiosResponse<FetchSystemsResponse>>
+  fetch(
+    params?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<FetchSystemsResponse>>
   create(input: SystemRequest): Promise<AxiosResponse<SystemResponse>>
   update(
     systemId: string,

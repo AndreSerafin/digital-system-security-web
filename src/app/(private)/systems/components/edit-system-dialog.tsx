@@ -337,7 +337,7 @@ export function EditSystemDialog({
                 </Button>
               </DialogClose>
               <Button disabled={isPending} type="submit">
-                {isPending ? <Loader2 className="animate-spin" /> : 'Confirmar'}
+                {isPending ? <Loader2 className="animate-spin" /> : 'Salvar'}
               </Button>
             </DialogFooter>
           </form>
