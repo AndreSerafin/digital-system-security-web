@@ -102,7 +102,11 @@ export function FilterForm() {
               <Button
                 className="gap-x-2"
                 variant={'outline'}
-                onClick={() => filterForm.reset()}
+                type="button"
+                onClick={() => {
+                  router.replace('?')
+                  filterForm.reset()
+                }}
               >
                 <FileMinus size={16} /> Limpar
               </Button>

@@ -13,6 +13,7 @@ export interface SystemResponse {
 }
 
 export interface FetchSystemsResponse {
+  total: number
   systems: SystemResponse[]
 }
 
