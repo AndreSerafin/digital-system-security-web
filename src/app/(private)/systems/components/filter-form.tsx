@@ -5,6 +5,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { FileMinus, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+// const filterFormSchema = z.object({
+//   description: z.string().optional(),
+//   acronym: z.string().optional(),
+//   attendanceEmail: z.string().optional(),
+// })
 
 export function FilterForm() {
   return (

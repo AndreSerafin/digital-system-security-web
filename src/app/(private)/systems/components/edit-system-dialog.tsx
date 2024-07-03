@@ -32,9 +32,11 @@ import { toast } from '@/components/ui/use-toast'
 import { makeAxiosSystemsService } from '@/services/axios/factories/make-axios-systems-service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { parseISO, format } from 'date-fns'
 
 const editSystemFormSchema = z.object({
   description: z.string().min(1, 'Campo Obrigatório'),
@@ -44,7 +46,7 @@ const editSystemFormSchema = z.object({
   status: z.enum(['ACTIVE', 'INACTIVE', '']),
   lastUpdateAuthor: z.string().optional(),
   lastUpdateJustification: z.string().optional(),
-  newUpdateJustification: z.string(),
+  newUpdateJustification: z.string().min(1, 'Campo obrigatório'),
   updatedAt: z.string().optional(),
 })
 
@@ -142,7 +144,8 @@ export function EditSystemDialog({
     setValue('lastUpdateAuthor', lastUpdateAuthor)
     setValue('lastUpdateJustification', lastUpdateJustification)
     setValue('newUpdateJustification', newUpdateJustification)
-    setValue('updatedAt', updatedAt)
+    updatedAt &&
+      setValue('updatedAt', format(parseISO(updatedAt), 'dd-MM-yyyy hh:mm'))
   }
 
   useEffect(() => {
@@ -329,11 +332,13 @@ export function EditSystemDialog({
 
             <DialogFooter className="justify-end !mt-6">
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button disabled={isPending} type="button" variant="outline">
                   Voltar
                 </Button>
               </DialogClose>
-              <Button type="submit">Confirmar</Button>
+              <Button disabled={isPending} type="submit">
+                {isPending ? <Loader2 className="animate-spin" /> : 'Confirmar'}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
