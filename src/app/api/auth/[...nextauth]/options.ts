@@ -2,6 +2,7 @@ import { env } from '@/env'
 import { makeAxiosAuthService } from '@/services/axios/factories/make-axios-auth-service'
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { decodeJwt } from 'jose'
 
 const authService = makeAxiosAuthService()
 
@@ -57,7 +58,13 @@ const nextAuthOptions: NextAuthOptions = {
         access_token: accessToken,
       }
 
+      const { role } = decodeJwt<{
+        sub: string
+        role: 'SUPER_ADMIN' | 'SYSTEM_ADMIN' | 'TECHINICAL_MANAGER'
+      }>(accessToken)
+
       session.error = error
+      session.role = role
 
       return session
     },

@@ -1,5 +1,6 @@
 'use client'
 
+import { PermissionGate } from '@/components/permission-gate'
 import { Cog, LogOut, Users2 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
@@ -17,12 +18,14 @@ export function Sidebar() {
         >
           <Cog />
         </Link>
-        <Link
-          className={`p-2 text-white hover:bg-slate-400 transition-all rounded-md ${pathname === '/accounts' && 'bg-slate-500'}`}
-          href={'/accounts'}
-        >
-          <Users2 />
-        </Link>
+        <PermissionGate type="component" allowedRoles={['SUPER_ADMIN']}>
+          <Link
+            className={`p-2 text-white hover:bg-slate-400 transition-all rounded-md ${pathname === '/accounts' && 'bg-slate-500'}`}
+            href={'/accounts'}
+          >
+            <Users2 />
+          </Link>
+        </PermissionGate>
       </div>
       <div>
         <button

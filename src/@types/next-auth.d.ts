@@ -6,6 +6,7 @@ export declare module 'next-auth' {
 
   interface Session {
     user: User
+    role: 'SUPER_ADMIN' | 'SYSTEM_ADMIN' | 'TECHINICAL_MANAGER'
     expires: string
     error?: string
   }
