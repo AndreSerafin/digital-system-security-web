@@ -20,7 +20,8 @@ const systemsService = makeAxiosSystemsService()
 
 export function SystemsTable() {
   const params = useSearchParams()
-  const page = Number(params.get('page')) ?? 1
+  const page = Number(params.get('page')) > 0 ? Number(params.get('page')) : 1
+
   const attendanceEmail = params.get('attendanceEmail')
   const description = params.get('description')
   const acronym = params.get('acronym')

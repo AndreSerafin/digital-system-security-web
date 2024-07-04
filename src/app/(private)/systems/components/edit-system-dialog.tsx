@@ -96,7 +96,7 @@ export function EditSystemDialog({
     },
     onSuccess: () => {
       toast({ variant: 'success', title: 'Sistema editado com sucesso' })
-      queryClient.fetchQuery({ queryKey: ['fetch-systems'] })
+      queryClient.refetchQueries({ queryKey: ['fetch-systems'] })
       handleCloseDialog()
     },
   })

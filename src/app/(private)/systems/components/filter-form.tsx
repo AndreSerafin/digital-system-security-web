@@ -19,7 +19,7 @@ import { z } from 'zod'
 const filterFormSchema = z.object({
   description: z.string().optional(),
   acronym: z.string().optional(),
-  attendanceEmail: z.string().optional(),
+  attendanceEmail: z.string().email('Email inválido').optional(),
 })
 
 type FilterFormInputs = z.infer<typeof filterFormSchema>

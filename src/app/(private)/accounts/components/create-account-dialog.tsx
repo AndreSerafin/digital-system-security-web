@@ -21,78 +21,77 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { toast } from '@/components/ui/use-toast'
-import { makeAxiosSystemsService } from '@/services/axios/factories/make-axios-systems-service'
+import { makeAxiosAccountsService } from '@/services/axios/factories/make-axios-account-service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2, Plus } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-const createSystemFormSchema = z.object({
-  description: z.string().min(1, 'Campo Obrigatório'),
-  acronym: z.string().min(1, 'Campo Obrigatório'),
-  attendanceEmail: z.string().email({ message: 'E-mail inválido' }).optional(),
-  url: z.string().url({ message: 'URL Inválida' }),
+const createAccountFormSchema = z.object({
+  name: z.string().min(1, 'Campo Obrigatório'),
+  email: z.string().email({ message: 'E-mail inválido' }),
+  password: z.string().min(1, 'Campo Obrigatório'),
+  role: z.enum(['SUPER_ADMIN', 'SYSTEM_ADMIN', 'TECHINICAL_MANAGER']),
 })
 
-type CreateSystemFormInputs = z.infer<typeof createSystemFormSchema>
+type CreateAccountFormInputs = z.infer<typeof createAccountFormSchema>
 
-const systemsService = makeAxiosSystemsService()
+const accountsService = makeAxiosAccountsService()
 
-export function CreateSystemDialog() {
+export function CreateAccountDialog() {
   const [isOpen, setIsOpen] = useState(false)
 
-  const { mutateAsync: handleCreateSystem, isPending } = useMutation({
-    mutationKey: ['create-system'],
+  const { mutateAsync: handleCreateAccount, isPending } = useMutation({
+    mutationKey: ['create-account'],
     mutationFn: async ({
-      acronym,
-      description,
-      url,
-      attendanceEmail,
-    }: CreateSystemFormInputs) => {
-      const { data } = await systemsService.create({
-        acronym,
-        attendance_email: attendanceEmail,
-        description,
-        url,
+      email,
+      name,
+      password,
+      role,
+    }: CreateAccountFormInputs) => {
+      const { data } = await accountsService.create({
+        email,
+        name,
+        password,
+        role,
       })
 
       return data
     },
     onSuccess: () => {
-      toast({ variant: 'success', title: 'Sistema criado com sucesso' })
-      queryClient.refetchQueries({ queryKey: ['fetch-systems'] })
+      toast({ variant: 'success', title: 'Conta criada com sucesso' })
+      queryClient.refetchQueries({ queryKey: ['fetch-accounts'] })
       handleCloseDialog()
     },
   })
 
-  const createSystemForm = useForm<CreateSystemFormInputs>({
-    resolver: zodResolver(createSystemFormSchema),
+  const createAccountForm = useForm<CreateAccountFormInputs>({
+    resolver: zodResolver(createAccountFormSchema),
     defaultValues: {
-      acronym: '',
-      attendanceEmail: undefined,
-      description: '',
-      url: '',
+      email: '',
+      name: '',
+      password: '',
     },
     mode: 'onChange',
     disabled: isPending,
   })
 
-  const { watch, setValue, reset } = createSystemForm
-  const attendanceEmail = watch('attendanceEmail')
+  const { reset } = createAccountForm
 
   function handleCloseDialog() {
     setIsOpen(false)
     reset()
   }
-
-  useEffect(() => {
-    if (attendanceEmail === '') {
-      setValue('attendanceEmail', undefined)
-    }
-  }, [attendanceEmail, setValue])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -100,32 +99,32 @@ export function CreateSystemDialog() {
         className={buttonVariants({ variant: 'default', className: 'gap-x-2' })}
       >
         <Plus />
-        Incluir novo sistema
+        Criar nova conta
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Incluir novo sistema</DialogTitle>
+          <DialogTitle>Criar nova conta</DialogTitle>
           <DialogDescription>
-            Preencha os campos abaixo para incluir um novo sistema.
+            Preencha os campos abaixo para criar uma nova conta.
           </DialogDescription>
         </DialogHeader>
-        <Form {...createSystemForm}>
+        <Form {...createAccountForm}>
           <form
             className="space-y-1"
-            onSubmit={createSystemForm.handleSubmit((data) =>
-              handleCreateSystem(data),
+            onSubmit={createAccountForm.handleSubmit((data) =>
+              handleCreateAccount(data),
             )}
           >
             <div className="p-4 border-[2px] rounded-md relative space-y-2">
               <h2 className="absolute top-[-14px] px-2 left-1 font-semibold bg-background">
-                Dados do sistema
+                Dados da conta
               </h2>
               <FormField
-                control={createSystemForm.control}
-                name="description"
+                control={createAccountForm.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
-                    <FormLabel>Descrição</FormLabel>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -134,11 +133,11 @@ export function CreateSystemDialog() {
                 )}
               />
               <FormField
-                control={createSystemForm.control}
-                name="acronym"
+                control={createAccountForm.control}
+                name="email"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
-                    <FormLabel>Sigla</FormLabel>
+                    <FormLabel>E-mail</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -147,26 +146,41 @@ export function CreateSystemDialog() {
                 )}
               />
               <FormField
-                control={createSystemForm.control}
-                name="attendanceEmail"
+                control={createAccountForm.control}
+                name="password"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-1.5">
-                    <FormLabel>Email de atendimento</FormLabel>
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <FormField
-                control={createSystemForm.control}
-                name="url"
-                render={({ field }) => (
+                control={createAccountForm.control}
+                name="role"
+                render={({ field: { onChange, ...field } }) => (
                   <FormItem className="flex flex-col space-y-1.5">
-                    <FormLabel>URL</FormLabel>
+                    <FormLabel>Cargo</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Select onValueChange={onChange} {...field}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um cargo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="SUPER_ADMIN">
+                            Super Administrador
+                          </SelectItem>
+                          <SelectItem value="SYSTEM_ADMIN">
+                            Administrador do Sistema
+                          </SelectItem>
+                          <SelectItem value="TECHINICAL_MANAGER">
+                            Responsável Técnico
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

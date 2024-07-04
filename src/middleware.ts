@@ -6,7 +6,7 @@ import { NextRequestWithAuth } from 'next-auth/middleware'
 export { default } from 'next-auth/middleware'
 
 export const config = {
-  matcher: ['/systems/:path*'],
+  matcher: ['/systems/:path*', '/accounts/:path*'],
 }
 
 export async function middleware(request: NextRequestWithAuth) {
